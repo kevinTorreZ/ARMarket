@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "193786078097",
+    "project_id": "armarket-3ebfd",
+    "storage_bucket": "armarket-3ebfd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193786078097:android:447c21632c3c119d8ef030",
+        "android_client_info": {
+          "package_name": "com.example.armarket"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB9BbYQwfpotd3gJlcvGFf88HyocEaUupA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
