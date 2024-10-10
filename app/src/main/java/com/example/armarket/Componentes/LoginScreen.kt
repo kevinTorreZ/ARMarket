@@ -12,7 +12,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.armarket.ViewModel.LoginViewModel
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
+fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
+    onGoogleSignIn: () -> Unit,
+    onFacebookSignIn: () -> Unit,
+    onPasswordRecovery: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,12 +56,31 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón de registro
+        // Botones de inicio de sesión con redes sociales
         Button(
-            onClick = { viewModel.register() },
+            onClick = onGoogleSignIn,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Register")
+            Text("Login with Google")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = onFacebookSignIn,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Login with Facebook")
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Botón de recuperación de contraseña
+        Button(
+            onClick = onPasswordRecovery,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Recover Password")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -69,5 +93,5 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel()) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(onGoogleSignIn = {}, onFacebookSignIn = {}, onPasswordRecovery = {})
 }

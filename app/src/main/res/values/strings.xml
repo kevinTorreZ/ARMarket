@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ARMarket</string>
+    <string name="default_web_client_id">tu_web_client_id_aqui</string>
 </resources>
