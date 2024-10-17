@@ -1,24 +1,35 @@
 package com.example.armarket
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
+import androidx.lifecycle.lifecycleScope
 import com.example.armarket.Componentes.LoginScreen
 import com.example.armarket.Componentes.HomeScreen
 import com.example.armarket.ViewModel.LoginViewModel
 import com.example.armarket.ViewModel.LocationViewModel
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var credentialManager: CredentialManager
 
     private val loginViewModel: LoginViewModel by viewModels()
     private val locationViewModel: LocationViewModel by viewModels()
@@ -26,7 +37,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Solicitar permisos de ubicación
+        credentialManager = CredentialManager.create(this)
+
         requestLocationPermission()
 
         setContent {
@@ -38,7 +50,6 @@ class MainActivity : ComponentActivity() {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         } else {
-            // Los permisos ya están concedidos
             locationViewModel.requestLocationUpdates()
         }
     }
@@ -50,7 +61,7 @@ class MainActivity : ComponentActivity() {
             composable("login") {
                 LoginScreen(
                     viewModel = loginViewModel,
-                    onGoogleSignIn = { signInWithGoogle() },
+                    onGoogleSignIn = { requestGoogleCredential() },
                     onFacebookSignIn = { signInWithFacebook() },
                     onPasswordRecovery = { loginViewModel.recoverPasswordByEmail() },
                     onLoginSuccess = {
@@ -61,20 +72,32 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable("home") {
-                val locationViewModel: LocationViewModel by viewModels()
                 HomeScreen(locationViewModel)
             }
         }
     }
 
-    private fun signInWithGoogle() {
-        val idToken = "google-id-token"
-        loginViewModel.firebaseAuthWithGoogle(idToken)
+    private fun requestGoogleCredential() {
+        val request = GetCredentialRequest.Builder()
+            .build()
+
+        lifecycleScope.launch {
+            try {
+                val response = credentialManager.getCredential(this@MainActivity, request)
+                Log.d("CredentialManager", "Credencial recibida: ${response.credential}")
+                // Aquí puedes navegar a la pantalla de inicio después de un inicio de sesión exitoso
+            } catch (e: GetCredentialException) {
+                Log.e("CredentialManager", "Error al obtener la credencial", e)
+                // Aquí puedes iniciar el flujo de inicio de sesión si no se encuentra la credencial
+                // startGoogleSignIn() (No se necesita si solo usas Credential Manager)
+            } catch (e: Exception) {
+                Log.e("CredentialManager", "Error desconocido", e)
+            }
+        }
     }
 
     private fun signInWithFacebook() {
-        val result = "facebook-result" // Reemplazar con el resultado real de Facebook
-        // Implementa la lógica para iniciar sesión con Facebook aquí
+        // Implementar lógica de inicio de sesión con Facebook aquí
     }
 
     companion object {

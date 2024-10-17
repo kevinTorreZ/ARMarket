@@ -18,7 +18,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
-import com.example.armarket.api.DirectionsResponse
 
 class LocationViewModel(application: Application) : AndroidViewModel(application) {
 
